@@ -1,11 +1,11 @@
 # aia_spikes
 Software for processing spikes in AIA data
 
-OVERVIEW
+Overview
 ========
 This software was written in the IDL language and it attempts to identify real solar events within the discarded "spike" data produced by the AIA instrument onboard the Solar Dynamics Observatory (SDO). The sections below describe how to use the software.
 
-REQUIREMENTS
+Requirements
 ============
 IDL version 8.5 or higher is recommended.
 
@@ -15,14 +15,15 @@ Set the environment variable $AIA_SPIKES in your idl_startup.pro file to the loc
 
 Make sure you have the set of "SPK" IDL routines (this repository).
 
-Make sure you have the routine sdo_orderjsoc.
+Make sure you have the routine sdo_orderjsoc. Available from Rob Rutten's website:
+
+https://robrutten.nl/rridl/sdolib/dircontent.html
 
 Make sure you have a registered account at JSOC (you need the email address that the account is registered to).
 
 Make sure ffmpeg is installed on your computer (for making movies).
 
-
-DOWNLOAD SPIKES FILES
+Download spikes files
 =====================
 Go to the JSOC Export Data page:
 
@@ -45,10 +46,10 @@ If the routine says the data are ready to be downloaded, then run the above rout
 Now ingest the files into your $AIA_SPIKES directory:
 
 IDL> list=file_search('*.spikes.fits')
+
 IDL> aia_ingest_spikes,list
 
-
-PLOT SPIKE TIME SERIES
+Plot spike time series
 ======================
 (You should do this step if you plan to extract a sub-set of the day's spikes files for your analysis. For example, you will see periods when the number of spikes are low, implying the number of particle hits is low.) 
 
@@ -57,8 +58,7 @@ Here we plot how the number of spikes varies during the day.
 IDL> d=spk_get_metadata('28-feb-2017',171)
 IDL> utplot,d.t_obs,d.nspikes,/xsty
 
-
-PROCESS SPIKE DATA
+Process spike data
 ==================
 Edit the top few lines of the "process_spikes.pro" file to customize it for yourself and set the day and wavelength that you're interested
 in.
