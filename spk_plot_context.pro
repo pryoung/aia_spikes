@@ -59,7 +59,7 @@ FUNCTION spk_plot_context, group, index, dir, boxsiz=boxsiz, buffer=buffer, $
 ;     Ver.1, 09-Apr-2021, Peter Young
 ;     Ver.2, 12-Apr-2021, Peter Young
 ;        Fixed bug in /quiet implementation.
-;     ver.3, 20-Apr-2021, Peter Young
+;     Ver.3, 20-Apr-2021, Peter Young
 ;-
 
 
