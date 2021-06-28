@@ -41,5 +41,4 @@ spk_respike_groups,date,wave,outdir,metadata=mdata
 spk_make_movie_frames,group,outdir  ; use /linear, if necessary.
 spk_movie_ffmpeg,group,outdir,/log
 
-
 END
