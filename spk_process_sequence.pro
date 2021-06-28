@@ -34,8 +34,11 @@ FUNCTION spk_process_sequence, filelist, indir=indir
 ;         X               FLOAT           216.197
 ;         Y               FLOAT          -625.842
 ;         TIME_RANGE      STRING    Array[2]
-;         REQUESTID       Empty string.
+;         REQUESTID       Empty string (filled by spk_group_spikes).
 ;         WAVE            AIA wavelength.
+;         DUR             Set to zero (filled by spk_group_spikes).
+;         SPK_IND_STR     Empty string (filled by spk_group_spikes).
+;
 ;      (I,J) give the pixel location in the level-1 image, R gives the
 ;      radial location (relative to sun center in arcsec). (X,Y) give
 ;      the location in heliocentric coordinates. TIME_RANGE gives the
@@ -57,7 +60,9 @@ FUNCTION spk_process_sequence, filelist, indir=indir
 ;      Ver.3, 31-Mar-2021, Peter Young
 ;         tidied up header.
 ;      Ver.4, 07-Apr-2021, Peter Young
-;         added requestid and wave to output structure. 
+;         added requestid and wave to output structure.
+;      Ver.5, 21-Jun-2021, Peter Young
+;         added 'dur' and 'spk_ind_str' tags to output.
 ;-
 
 
@@ -72,12 +77,13 @@ ENDELSE
 str={i: -1, j:-1, r: 0., spikefile: '', $
      x: 0., y: 0., time_range: strarr(2), $
      spikes: fltarr(3), despikes: fltarr(3), $
-     requestid: '', wave: 0}
+     requestid: '', wave: 0, dur: 0., spk_ind_str: ''}
 output=0
 
 read_sdo,filelist[0],index0,data0,/use_shared_lib,/silent
 str.wave=index0.wavelnth
 read_sdo,filelist[1],index1,data1,/use_shared_lib,/silent
+count=0
 FOR i=1,n-2 DO BEGIN
   read_sdo,filelist[i+1],index2,data2,/use_shared_lib,/silent
   s=size(data1,/dim)

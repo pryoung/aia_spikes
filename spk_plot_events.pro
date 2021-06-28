@@ -1,11 +1,20 @@
 
 function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,  $
-                          list=list, _extra=_extra
+                          list=list, _extra=_extra, dmin=dmin
 
 ;+
+; NAME:
+;     SPK_PLOT_EVENTS
+;
 ; PURPOSE:
 ;     From the group structure this routine downloads a synoptic image
 ;     and shows where the events occur.
+;
+; CATEGORY:
+;     SDO; AIA; spikes.
+;
+; CALLING SEQUENCE:
+;     Result = SPK_PLOT_EVENTS( Group )
 ;
 ; INPUTS:
 ;     Group:  The structure produced by spk_group_spikes.pro.
@@ -18,10 +27,21 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ;              plotting number M. So if there are 100 events in group,
 ;              then [2,1] means events 1-50 will be displayed in the
 ;              current plot.
+;     Dmin:   Specifies minimum DN value to use for plotting. If not
+;             set, then 100 is used.
+;	
+; KEYWORD PARAMETERS:
+;     NUMBER:  If set, then the event locations are plotted with the
+;              index number of the event.
+;     CH:     Overplot the SPoCA coronal hole outlines from the HEK. 
 ;
 ; OUTPUTS:
 ;     Returns an IDL plot object containing the AIA image, with the
 ;     locations of the events over-plotted.
+;
+; EXAMPLE:
+;     IDL> p=spk_plot_events(group)
+;     IDL> p=spk_plot_events(group,wave=171)
 ;
 ; MODIFICATION HISTORY:
 ;     Ver.1, 18-Mar-2016, Peter Young
@@ -31,7 +51,10 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ;        now calls eis_mapper_aia_map to get the AIA image.
 ;     Ver.4, 30-Mar-2021, Peter Young
 ;        added /number and /ch keywords.
+;     Ver.5, 15-Jun-2021, Peter Young
+;        added DMIN= optional input; expanded header.
 ;-
+
 
 IF n_elements(wave) EQ 0 THEN wave=193
 
@@ -39,6 +62,8 @@ IF n_elements(nplots) NE 0 AND n_elements(nplots) NE 2 THEN BEGIN
    print,'% SPK_PLOT_EVENTS: NPLOTS should be given as [N,M] - see header. Returning...'
    return,-1
 ENDIF
+
+IF n_elements(dmin) EQ 0 THEN dmin=100.
 
 n=n_elements(group)
 IF n_elements(nplots) EQ 2 THEN BEGIN
@@ -62,7 +87,7 @@ t_dur=anytim2tai(g.time_range[1])-anytim2tai(g.time_range[0])
 map=eis_mapper_aia_map(t_ref_tai,wave)
 
 
-p=plot_map_obj(map,/log,dmin=100,rgb_table=aia_rgb_table(wave),font_size=12, $
+p=plot_map_obj(map,/log,dmin=dmin,rgb_table=aia_rgb_table(wave),font_size=12, $
               xrange=[-1100,1100],yrange=[-1100,1100],_extra=_extra)
 
 dtheta=2.*!pi/float(n)
