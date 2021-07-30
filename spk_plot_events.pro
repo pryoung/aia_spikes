@@ -1,6 +1,6 @@
 
 function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,  $
-                          list=list, _extra=_extra, dmin=dmin
+                          list=list, _extra=_extra, dmin=dmin, image_time=image_time
 
 ;+
 ; NAME:
@@ -29,6 +29,10 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ;              current plot.
 ;     Dmin:   Specifies minimum DN value to use for plotting. If not
 ;             set, then 100 is used.
+;     Image_Time:  Specifies the time for which you want the AIA
+;             image. Should be specified in a standard Solarsoft
+;             format. If not specified, then it is set to the mid-time
+;             between the minimum and maximum times in GROUP.
 ;	
 ; KEYWORD PARAMETERS:
 ;     NUMBER:  If set, then the event locations are plotted with the
@@ -53,6 +57,8 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ;        added /number and /ch keywords.
 ;     Ver.5, 15-Jun-2021, Peter Young
 ;        added DMIN= optional input; expanded header.
+;     Ver.6, 14-Jul-2021, Peter Young
+;        added IMAGE_TIME= optional input.
 ;-
 
 
@@ -76,11 +82,15 @@ ENDIF ELSE BEGIN
 ENDELSE
 n=n_elements(g)
 
-
-
-t_tai=anytim2tai(g.time_range)
-
-t_ref_tai=0.5*(max(t_tai)+min(t_tai))
+;
+; Get the time for which the AIA image is needed.
+;
+IF n_elements(image_time) NE 0 THEN BEGIN
+   t_ref_tai=anytim2tai(image_time)
+ENDIF ELSE BEGIN 
+   t_tai=anytim2tai(g.time_range)
+   t_ref_tai=0.5*(max(t_tai)+min(t_tai))
+ENDELSE 
 
 t_dur=anytim2tai(g.time_range[1])-anytim2tai(g.time_range[0])
 
