@@ -19,7 +19,7 @@ FUNCTION spk_get_files, date, wave
 ; INPUTS:
 ;     Date:   A string containing a date in a standard format. For
 ;             example, '2017-02-28'.
-;     Wave:   An integer specifying an IDL filter. For example, 171 or
+;     Wave:   An integer specifying an AIA filter. For example, 171 or
 ;             193. 
 ;
 ; OUTPUTS:
@@ -27,7 +27,7 @@ FUNCTION spk_get_files, date, wave
 ;     occurs, then a value of -1 is returned.
 ;
 ; RESTRICTIONS:
-;     Requires the environment variable $AIA_SPIKES should be set, and
+;     Requires the environment variable $AIA_SPIKES to be set, and
 ;     files should be ingested with the routine AIA_INGEST_SPIKES.
 ;
 ; EXAMPLE:
@@ -38,11 +38,15 @@ FUNCTION spk_get_files, date, wave
 ;     Ver.2, 28-Apr-2021, Peter Young
 ;       Changed from recursive to standard file_search to avoid
 ;       picking up files in sub-directories.
+;     Ver.3, 23-Aug-2021, Peter Young
+;       Fixed errors in header; added extra information message.
 ;-
 
 
 IF n_params() LT 2 THEN BEGIN
    print,'Use:  IDL> list = spk_get_files( date, wave )'
+   print,''
+   print,'  (The spikes files should be in $AIA_SPIKES. See the routine aia_ingest_spikes.pro.)'
    return,-1
 ENDIF 
 
