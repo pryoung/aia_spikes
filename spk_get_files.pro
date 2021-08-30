@@ -1,6 +1,6 @@
 
 
-FUNCTION spk_get_files, date, wave
+FUNCTION spk_get_files, date, wave, count=count
 
 ;+
 ; NAME:
@@ -26,6 +26,9 @@ FUNCTION spk_get_files, date, wave
 ;     A string array containing the spikes filenames. If a problem
 ;     occurs, then a value of -1 is returned.
 ;
+; OPTIONAL OUTPUTS:
+;     Count:  The number of files found.
+;
 ; RESTRICTIONS:
 ;     Requires the environment variable $AIA_SPIKES to be set, and
 ;     files should be ingested with the routine AIA_INGEST_SPIKES.
@@ -39,12 +42,13 @@ FUNCTION spk_get_files, date, wave
 ;       Changed from recursive to standard file_search to avoid
 ;       picking up files in sub-directories.
 ;     Ver.3, 23-Aug-2021, Peter Young
-;       Fixed errors in header; added extra information message.
+;       Fixed errors in header; added extra information message; added
+;       count= optional input.
 ;-
 
 
 IF n_params() LT 2 THEN BEGIN
-   print,'Use:  IDL> list = spk_get_files( date, wave )'
+   print,'Use:  IDL> list = spk_get_files( date, wave [, count= ])'
    print,''
    print,'  (The spikes files should be in $AIA_SPIKES. See the routine aia_ingest_spikes.pro.)'
    return,-1
@@ -67,9 +71,9 @@ IF chck.exists EQ 0 THEN BEGIN
    return,-1
 ENDIF
 
-list=file_search(concat_dir(dir,'*.spikes.fits'),count=n)
+list=file_search(concat_dir(dir,'*.spikes.fits'),count=count)
 
-IF n EQ 0 THEN BEGIN
+IF count EQ 0 THEN BEGIN
    print,'% SPK_GET_FILES: no files found for this date and filter. Returning...'
    return,-1
 ENDIF

@@ -1,6 +1,6 @@
 
 PRO spk_request_cutouts, input, wavel, email ,output=output, cadence=cadence, $
-                         xsize=xsize, ysize=ysize
+                         xsize=xsize, ysize=ysize, twindow==twindow
 
 
 ;+
@@ -27,7 +27,14 @@ PRO spk_request_cutouts, input, wavel, email ,output=output, cadence=cadence, $
 ;      Cadence:  A string specifying cadence. E.g., '5m' or '1h'. The
 ;                default is '12s'.
 ;      Xsize:    Size of cutout in X-direction (arcsec). Default is 50.
-;      Ysize:    Size of cutout in Y-direction (arcsec). Default is 50.
+;      Ysize:    Size of cutout in Y-direction (arcsec). Default is
+;      50.
+;      Twindow:  Defines the duration of the sequence to be
+;                downloaded. If the spikes are present for time the
+;                time interval [t0,t1], then the downloaded sequence
+;                will extend from t0-twindow to t1+twindow, where
+;                twindow is given in minutes. The default is twindow=5
+;                minutes. 
 ;	
 ; OUTPUTS:
 ;      Sends queries to the JSOC. You should receive emails as each
@@ -61,6 +68,8 @@ PRO spk_request_cutouts, input, wavel, email ,output=output, cadence=cadence, $
 ;         Updated header; added EMAIL, XSIZE and YSIZE inputs.
 ;      Ver.5, 06-Apr-2021, Peter Young
 ;         Fixed bug in xsize and ysize implementation.
+;      Ver.6, 30-Aug-2021, Peter Young
+;         Added twindow= optional input.
 ;-
 
 
@@ -74,6 +83,8 @@ ENDIF
 
 IF n_elements(xsize) EQ 0 THEN xsize=50
 IF n_elements(ysize) EQ 0 THEN ysize=50
+
+IF n_elements(twindow) EQ 0 THEN twindow=5.0
 
 nw=n_elements(wavel)
 IF nw NE 0 THEN BEGIN
@@ -96,7 +107,7 @@ output=replicate(str,n)
 
 FOR i=0,n-1 DO BEGIN
   trange_tai=anytim2tai(input[i].time_range)
-  trange_tai=trange_tai/60. + [-5,5]
+  trange_tai=trange_tai/60. + [-twindow,twindow]
   duration=trange_tai[1]-trange_tai[0]
   t_ex=anytim2utc(/ex,trange_tai[0]*60.)
   datetimestart=trim(t_ex.year)+'.'+ $
