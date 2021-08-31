@@ -38,10 +38,14 @@ FUNCTION spk_get_time_range, date, wave, time_range=time_range, metadata=metadat
 ;     Metadata:  The structure returned by SPK_GET_METADATA.
 ;
 ; EXAMPLE:
-;     IDL> filelist=spk_get_time_range('27-feb-2017',171,time_range=['03:00','06:00']
+;     IDL> filelist=spk_get_time_range('27-feb-2017',171, $
+;               time_range=['03:00','06:00'],metadata=metadata)
 ;
 ; MODIFICATION HISTORY:
 ;     Ver.1, 06-Apr-2021, Peter Young
+;     Ver.2, 31-Aug-2021, Peter Young
+;       Now catches the case when the number of spikes files does not
+;       match the size of metadata.
 ;-
 
 IF n_elements(time_range) EQ 2 THEN BEGIN
@@ -55,9 +59,20 @@ ENDIF ELSE BEGIN
    return,''
 ENDELSE 
 
-filelist=spk_get_files(date,wave)
+filelist=spk_get_files(date,wave,count=count)
 
 IF n_elements(metadata) EQ 0 THEN metadata=spk_get_metadata(date,wave)
+
+IF n_elements(metadata) NE count THEN BEGIN
+   print,'% SPK_GET_TIME_RANGE: The number of spike files does not match the size of metadata!'
+   print,'       No. of files:     '+trim(count)
+   print,'       Size of metadata: '+trim(n_elements(metadata))
+   print,''
+   print,'  This is probably because you do not have a complete set of spikes files for the day.'
+   print,'  Please try downloading them again from JSOC.'
+   return,''
+ENDIF 
+
 tobs_tai=anytim2tai(metadata.t_obs)
 k=where(tobs_tai GE t0_tai AND tobs_tai LE t1_tai,nk)
 
