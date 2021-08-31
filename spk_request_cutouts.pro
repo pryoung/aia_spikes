@@ -1,6 +1,6 @@
 
 PRO spk_request_cutouts, input, wavel, email ,output=output, cadence=cadence, $
-                         xsize=xsize, ysize=ysize, twindow==twindow
+                         xsize=xsize, ysize=ysize, twindow=twindow
 
 
 ;+
