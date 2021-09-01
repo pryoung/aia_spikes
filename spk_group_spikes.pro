@@ -59,6 +59,9 @@ FUNCTION spk_group_spikes, spike_str, sep_check=sep_check, time_check=time_check
 ;        Fixed bug whereby time_range was not extended if the new
 ;        three-spike partially lies within the group event; now fills
 ;        the spk_ind_str and dur tags.
+;      Ver.7, 01-Sep-2021, Peter Young
+;        Fixed bug whereby spk_ind_str had a mistake if a spike met
+;        the sep_check, but failed the time_check.
 ;-
 
 
@@ -143,7 +146,7 @@ FOR i=1,n-1 DO BEGIN
       ENDFOR
       IF swtch EQ 0 THEN BEGIN
          group=[group,spike_str[i]]
-         group[-1].spk_ind_str=group[-1].spk_ind_str+group[-1].spk_ind_str+'+'+trim(i)
+         group[-1].spk_ind_str=trim(i)
       ENDIF 
    ENDELSE 
 ENDFOR 
