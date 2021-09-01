@@ -146,7 +146,6 @@ FOR i=1,n-2 DO BEGIN
          str.time_range=[index0.t_obs,index2.t_obs]
          str.spikefile=filelist[i]
          IF n_tags(output) EQ 0 THEN output=str ELSE output=[output,str]
-         count[str.ij]=count[str.ij]+1
       ENDIF 
     ENDIF     
   ENDFOR
