@@ -33,6 +33,8 @@ Submit a request for an entire day's worth of spikes for one filter by putting t
 
 aia.lev1_euv_12s[2017.02.28_00:00/1d][193]{spikes}
 
+You must download the entire day's worth of files. Do not be tempted to download only the files for the interval you are interested in!
+
 For "Method", use url-tar.
 
 Submit the request and wait till it gets assigned a RequestID.
@@ -56,6 +58,7 @@ Plot spike time series
 Here we plot how the number of spikes varies during the day.
 
 IDL> d=spk_get_metadata('28-feb-2017',171)
+
 IDL> utplot,d.t_obs,d.nspikes,/xsty
 
 Process spike data
