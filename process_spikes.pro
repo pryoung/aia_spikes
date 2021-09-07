@@ -11,6 +11,8 @@
 ;
 ; You can also run this script using a cron job. See the page:
 ;  https://pyoung.org/quick_guides/idl_cron.html
+;
+; 01-Sep-2021, PRY: couple of minor edits.
 ;-
 
 
@@ -31,8 +33,8 @@ chck=file_info(outdir)
 IF chck.exists EQ 0 THEN file_mkdir,outdir
 ;
 save,file=concat_dir(outdir,'metadata.save'),mdata
-spikes=spk_process_sequence(list)
-save,file=concat_dir(outdir,'spikes.save'),spikes
+spikes=spk_process_sequence(list,info=info)
+save,file=concat_dir(outdir,'spikes.save'),spikes,info
 group=spk_group_spikes(spikes)
 spk_request_cutouts,group,wave,email,output=output
 save,file=concat_dir(outdir,'group.save'),group
