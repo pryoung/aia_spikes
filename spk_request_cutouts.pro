@@ -19,7 +19,8 @@ PRO spk_request_cutouts, input, wavel, email ,output=output, cadence=cadence, $
 ;      SPK_REQUEST_CUTOUTS, Input, Wavel
 ;
 ; INPUTS:
-;      Input:   A structure produced by spk_group_spikes.pro.
+;      Input:   A structure produced by spk_group_spikes.pro. Note
+;               that the REQUESTID tag gets filled by this routine.
 ;      Wavel:   An AIA wavelength (angstroms). Can be array.
 ;      Email:   This should be your registered username at JSOC.
 ;
@@ -70,6 +71,9 @@ PRO spk_request_cutouts, input, wavel, email ,output=output, cadence=cadence, $
 ;         Fixed bug in xsize and ysize implementation.
 ;      Ver.6, 30-Aug-2021, Peter Young
 ;         Added twindow= optional input.
+;      Ver.7, 07-Sep-2021, Peter Young
+;         If R>940 then set notrack=1, to prevent problems with cutout
+;         tracking if close or above limb.
 ;-
 
 
@@ -106,36 +110,38 @@ output=replicate(str,n)
 
 
 FOR i=0,n-1 DO BEGIN
-  trange_tai=anytim2tai(input[i].time_range)
-  trange_tai=trange_tai/60. + [-twindow,twindow]
-  duration=trange_tai[1]-trange_tai[0]
-  t_ex=anytim2utc(/ex,trange_tai[0]*60.)
-  datetimestart=trim(t_ex.year)+'.'+ $
-                strpad(trim(t_ex.month),2,fill='0')+'.'+ $
-                strpad(trim(t_ex.day),2,fill='0')+'_'+ $
-                strpad(trim(t_ex.hour),2,fill='0')+':'+ $
-                strpad(trim(t_ex.minute),2,fill='0')+':'+ $
-                strpad(trim(t_ex.second),2,fill='0')
-  datetimeend=''
- ;
-  sdo_orderjsoc, datetimestart, $
-                 duration, $
-                 input[i].x, $
-                 input[i].y, $
-                 email, $
-                 'My Name', $
-                 cadence=cadence, $
-                 xsize=xsize, $
-                 ysize=ysize, requestidents,requestsizes, $
-                 wavs=wavs, $
-                 waitduration=5.
- ;
-  input[i].requestid=requestidents
- ;
-  output[i].requestid=requestidents
-  output[i].requestsize=requestsizes
-  output[i].tstart=datetimestart
-  output[i].tend=datetimeend
+   IF input.r GE 940 THEN notrack=1 ELSE notrack=0
+   trange_tai=anytim2tai(input[i].time_range)
+   trange_tai=trange_tai/60. + [-twindow,twindow]
+   duration=trange_tai[1]-trange_tai[0]
+   t_ex=anytim2utc(/ex,trange_tai[0]*60.)
+   datetimestart=trim(t_ex.year)+'.'+ $
+                 strpad(trim(t_ex.month),2,fill='0')+'.'+ $
+                 strpad(trim(t_ex.day),2,fill='0')+'_'+ $
+                 strpad(trim(t_ex.hour),2,fill='0')+':'+ $
+                 strpad(trim(t_ex.minute),2,fill='0')+':'+ $
+                 strpad(trim(t_ex.second),2,fill='0')
+   datetimeend=''
+  ;
+   sdo_orderjsoc, datetimestart, $
+                  duration, $
+                  input[i].x, $
+                  input[i].y, $
+                  email, $
+                  'My Name', $
+                  cadence=cadence, $
+                  xsize=xsize, $
+                  ysize=ysize, requestidents,requestsizes, $
+                  wavs=wavs, $
+                  waitduration=5., $
+                  notrack=notrack
+  ;
+   input[i].requestid=requestidents
+  ;
+   output[i].requestid=requestidents
+   output[i].requestsize=requestsizes
+   output[i].tstart=datetimestart
+   output[i].tend=datetimeend
 ENDFOR
 
 END
