@@ -74,6 +74,8 @@ PRO spk_request_cutouts, input, wavel, email ,output=output, cadence=cadence, $
 ;      Ver.7, 07-Sep-2021, Peter Young
 ;         If R>940 then set notrack=1, to prevent problems with cutout
 ;         tracking if close or above limb.
+;      Ver.8, 08-Sep-2021, Peter Young
+;         Fixed bug in yesterday's implementation.
 ;-
 
 
@@ -110,7 +112,7 @@ output=replicate(str,n)
 
 
 FOR i=0,n-1 DO BEGIN
-   IF input.r GE 940 THEN notrack=1 ELSE notrack=0
+   IF input[i].r GE 940 THEN notrack=1 ELSE notrack=0
    trange_tai=anytim2tai(input[i].time_range)
    trange_tai=trange_tai/60. + [-twindow,twindow]
    duration=trange_tai[1]-trange_tai[0]
