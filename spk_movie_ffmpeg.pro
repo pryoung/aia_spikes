@@ -35,6 +35,9 @@ PRO spk_movie_ffmpeg, group, dir, log=log
 ;
 ; MODIFICATION HISTORY:
 ;     Ver.1, 09-Apr-2021, Peter Young
+;     Ver.2, 08-Sep-2021, Peter Young
+;       Removed pattern_type from ffmpeg call; changed how framefiles
+;       is specified; changed from h264 to libx264
 ;-
 
 
@@ -47,13 +50,14 @@ list=file_search(concat_dir(dir,'*'),/test_dir,count=n)
 
 FOR i=0,n-1 DO BEGIN
    framedir=concat_dir(list[i],'frames')
-   framefiles=concat_dir(framedir,'*.png')
+;   framefiles=concat_dir(framedir,'*.png')
+   framefiles=concat_dir(framedir,'image%04d.png')
    IF keyword_set(log) THEN logstr='_log' ELSE logstr=''
    movfile=concat_dir(list[i],'movie'+logstr+'.mp4')
    chck=file_info(movfile)
    IF chck.exists EQ 1 THEN file_delete,movfile
   ;
-   spawn_command="ffmpeg -r 15 -pattern_type glob -i '"+framefiles+"' -vcodec h264 -pix_fmt yuv420p -crf 20 "+movfile
+   spawn_command="ffmpeg -r 15 -i '"+framefiles+"' -vcodec libx264 -pix_fmt yuv420p -crf 20 "+movfile
    spawn,spawn_command
 ENDFOR 
 

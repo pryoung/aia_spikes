@@ -57,6 +57,10 @@ PRO spk_make_movie_frames, group, dir, wave=wave, no_processing=no_processing, $
 ;      Ver.6, 07-May-2021, Peter Young
 ;        Added keyword /clean to do a comparison of the respiked
 ;        images with the cleaned images.
+;      Ver.7, 08-Sep-2021, Peter Young
+;        Directly specify width of movie frames rather than use the
+;        resolution keyword; adjusted scaling for logarithmic movie
+;        frames due to problems with 94 channel.
 ;-
 
 
@@ -107,8 +111,9 @@ FOR i=0,n-1 DO BEGIN
          dmax=max(map.data)*0.90
          dmax2=max(map2.data)*0.90
       ENDIF ELSE BEGIN
-         dmin=max([r[0],10])
-         dmax=max(map2.data)
+;         dmin=max([r[0],10])
+         dmin=r[0]
+         dmax=max(map.data)
          dmax2=dmax
       ENDELSE 
      ;
@@ -131,7 +136,7 @@ FOR i=0,n-1 DO BEGIN
          lc2[j]=average(map2[j].data[nx/2-nbox:nx/2+nbox,ny/2-nbox:ny/2+nbox])
          outfile='image'+strpad(trim(j),4,fill='0')+'.png'
          outfile=concat_dir(outdir,outfile)
-         w.save,outfile,resolution=96
+         w.save,outfile,width=750
          w.close
         ;
       ENDFOR
