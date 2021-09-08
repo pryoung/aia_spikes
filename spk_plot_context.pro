@@ -60,6 +60,9 @@ FUNCTION spk_plot_context, group, index, dir, boxsiz=boxsiz, buffer=buffer, $
 ;     Ver.2, 12-Apr-2021, Peter Young
 ;        Fixed bug in /quiet implementation.
 ;     Ver.3, 20-Apr-2021, Peter Young
+;     Ver.4, 08-Sep-2021, Peter Young
+;        Fixed problem when a location is above the limb
+;        (rot_xy doesn't work).
 ;-
 
 
@@ -98,7 +101,6 @@ ENDIF
 ;
 t_tai=anytim2tai(group[index].time_range)
 t_ref_tai=0.5*(max(t_tai)+min(t_tai))
-;t_dur=anytim2tai(group.time_range[1])-anytim2tai(group.time_range[0])
 fd_map=eis_mapper_aia_map(t_ref_tai,wave,/quiet)
 
 
@@ -109,7 +111,13 @@ fd_map=eis_mapper_aia_map(t_ref_tai,wave,/quiet)
 ; Rotate all of the group events to the AIA map time.
 ;
 xy=fltarr(n,2)
-FOR i=0,n-1 DO xy[i,*]=rot_xy(group[i].x,group[i].y,tstart=group[i].time_range[0],tend=fd_map.time)
+FOR i=0,n-1 DO BEGIN
+   IF group[i].r LT 940. THEN BEGIN 
+      xy[i,*]=rot_xy(group[i].x,group[i].y,tstart=group[i].time_range[0],tend=fd_map.time)
+   ENDIF ELSE BEGIN
+      xy[i,*]=[group[i].x,group[i].y]
+   ENDELSE
+ENDFOR
 
 ;
 ; Get the cutout
@@ -128,6 +136,7 @@ FOR i=0,n-1 DO BEGIN
          xy[i,1] GE xy_ref[1]-boxsiz AND xy[i,1] LE xy_ref[1]+boxsiz THEN in_events[i]=1b
    ENDIF 
 ENDFOR 
+
 
 ;
 ; Plot the AIA image.
