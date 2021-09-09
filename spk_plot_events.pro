@@ -59,6 +59,9 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ;        added DMIN= optional input; expanded header.
 ;     Ver.6, 14-Jul-2021, Peter Young
 ;        added IMAGE_TIME= optional input.
+;     Ver.7, 09-Sep-2021, Peter Young
+;        Switched from aia_rgb_table to eis_mapper_aia_rgb when
+;        setting color table.
 ;-
 
 
@@ -97,7 +100,7 @@ t_dur=anytim2tai(g.time_range[1])-anytim2tai(g.time_range[0])
 map=eis_mapper_aia_map(t_ref_tai,wave)
 
 
-p=plot_map_obj(map,/log,dmin=dmin,rgb_table=aia_rgb_table(wave),font_size=12, $
+p=plot_map_obj(map,/log,dmin=dmin,rgb_table=eis_mapper_aia_rgb(wave),font_size=12, $
               xrange=[-1100,1100],yrange=[-1100,1100],_extra=_extra)
 
 dtheta=2.*!pi/float(n)

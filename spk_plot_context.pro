@@ -63,6 +63,9 @@ FUNCTION spk_plot_context, group, index, dir, boxsiz=boxsiz, buffer=buffer, $
 ;     Ver.4, 08-Sep-2021, Peter Young
 ;        Fixed problem when a location is above the limb
 ;        (rot_xy doesn't work).
+;     Ver.5, 09-Sep-2021, Peter Young
+;        Switched from aia_rgb_table to eis_mapper_aia_rgb when
+;        setting color table.
 ;-
 
 
@@ -141,7 +144,7 @@ ENDFOR
 ;
 ; Plot the AIA image.
 ;
-r=plot_map_obj(smap,dim=[400,400],margin=0,rgb_table=aia_rgb_table(wave), $
+r=plot_map_obj(smap,dim=[400,400],margin=0,rgb_table=eis_mapper_aia_rgb(wave), $
                /log,dmin=dmin,buffer=buffer, $
                pos=[0.10,0.08,1,1], $
                xmin=1,ymin=1,xtitle='',ytitle='',title='', $

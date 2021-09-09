@@ -61,6 +61,9 @@ PRO spk_make_movie_frames, group, dir, wave=wave, no_processing=no_processing, $
 ;        Directly specify width of movie frames rather than use the
 ;        resolution keyword; adjusted scaling for logarithmic movie
 ;        frames due to problems with 94 channel.
+;      Ver.8, 09-Sep-2021, Peter Young
+;        Switched from aia_rgb_table to eis_mapper_aia_rgb when
+;        setting color table
 ;-
 
 
@@ -126,11 +129,11 @@ FOR i=0,n-1 DO BEGIN
       tt_jd=tim2jd(map.time)
       FOR j=0,m-1 DO BEGIN
          w=window(dim=[750,400],/buffer)
-         p=plot_map_obj(map[j],rgb_table=aia_rgb_table(wave), $
+         p=plot_map_obj(map[j],rgb_table=eis_mapper_aia_rgb(wave), $
                         dmin=dmin,dmax=dmax, $
                         layout=[2,1,1],/current,xmin=1,ymin=1,log=log)
          lc[j]=average(map[j].data[nx/2-nbox:nx/2+nbox,ny/2-nbox:ny/2+nbox])
-         q=plot_map_obj(map2[j],rgb_table=aia_rgb_table(wave), $
+         q=plot_map_obj(map2[j],rgb_table=eis_mapper_aia_rgb(wave), $
                         dmin=dmin,dmax=dmax2, $
                         layout=[2,1,2],/current,xmin=1,ymin=1,log=log)
          lc2[j]=average(map2[j].data[nx/2-nbox:nx/2+nbox,ny/2-nbox:ny/2+nbox])
