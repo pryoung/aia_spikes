@@ -63,7 +63,8 @@ PRO spk_make_movie_frames, group, dir, wave=wave, no_processing=no_processing, $
 ;        frames due to problems with 94 channel.
 ;      Ver.8, 09-Sep-2021, Peter Young
 ;        Switched from aia_rgb_table to eis_mapper_aia_rgb when
-;        setting color table
+;        setting color table; now obtain directory list from the group
+;        requestids. 
 ;-
 
 
@@ -71,7 +72,10 @@ wave=group[0].wave
 
 log=1b-keyword_set(linear)
 
-list=file_search(concat_dir(dir,'*'),/test_dir,count=n)
+requestid=group.requestid
+list=concat_dir(dir,requestid)
+
+;list=file_search(concat_dir(dir,'*'),/test_dir,count=n)
 
 ;
 ; Get a synoptic full disk image to use for context plots.
