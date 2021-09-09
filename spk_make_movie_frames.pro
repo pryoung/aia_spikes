@@ -74,6 +74,7 @@ log=1b-keyword_set(linear)
 
 requestid=group.requestid
 list=concat_dir(dir,requestid)
+n=n_elements(list)
 
 ;list=file_search(concat_dir(dir,'*'),/test_dir,count=n)
 
