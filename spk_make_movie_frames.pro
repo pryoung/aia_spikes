@@ -112,8 +112,8 @@ FOR i=0,n-1 DO BEGIN
          dmax2=max(map2.data)*0.90
       ENDIF ELSE BEGIN
 ;         dmin=max([r[0],10])
-         dmin=r[0]
-         dmax=max(map.data)
+         dmin=max([r[0],1])
+         dmax=max([max(map.data),2])
          dmax2=dmax
       ENDELSE 
      ;

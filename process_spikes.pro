@@ -13,6 +13,7 @@
 ;  https://pyoung.org/quick_guides/idl_cron.html
 ;
 ; 01-Sep-2021, PRY: couple of minor edits.
+; 08-Sep-2021, PRY: now calls spk_get_outdir.
 ;-
 
 
@@ -23,14 +24,8 @@ email=''   ; <--- Put your registered JSOC email
 my_data_dir=''   ; <--- Specify a directory where output will go
 
 list=spk_get_time_range(date,wave,time_range=time_range,metadata=mdata)
-wavestr=strpad(trim(wave),4,fill='0')
-dir=time2fid(date,/full_year,delim='/')
 ;
-outdir=concat_dir(my_data_dir,'aia_spikes')
-outdir=concat_dir(outdir,dir)
-outdir=concat_dir(outdir,wavestr)
-chck=file_info(outdir)
-IF chck.exists EQ 0 THEN file_mkdir,outdir
+outdir=spk_get_outdir(date,wave,my_data_dir=my_data_dir)
 ;
 save,file=concat_dir(outdir,'metadata.save'),mdata
 spikes=spk_process_sequence(list,info=info)
