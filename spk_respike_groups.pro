@@ -40,16 +40,32 @@ PRO spk_respike_groups, date, wave, dir, metadata=metadata
 ;
 ; MODIFICATION HISTORY:
 ;     Ver.1, 06-Apr-2021, Peter Young
+;     Ver.2, 10-Sep-2021, Peter Young
+;       Caught case where there's a mismatch between metdata
+;       and the spikes file list.
 ;-
 
 
 list=file_search(concat_dir(dir,'*'),/test_dir,count=n)
 
-spikelist=spk_get_files(date,wave)
+spikelist=spk_get_files(date,wave,count=count)
 
 IF n_elements(metadata) EQ 0 THEN metadata=spk_get_metadata(date,wave)
 
 spk_tai=anytim2tai(metadata.t_obs)
+
+;
+; This is a kluge for the case where the first entry in metadata
+; actually belongs to the previous day (this happened for 211 in one
+; case). 
+;
+read_sdo,spikelist[0],index,/use_shared,/silent
+t_obs_tai=anytim2tai(index.t_obs)
+IF t_obs_tai-spk_tai[0] GE 5.0 THEN BEGIN
+   print,'% SPK_RESPIKE_GROUPS: mismatch between metadata and spikelist. Adjusting arrays.'
+   metadata=metadata[1:*]
+   spikelist=spikelist[0:count-2]
+ENDIF 
 
 
 ;
@@ -67,10 +83,10 @@ FOR i=0,n-1 DO BEGIN
   ;
    filelist=file_search(list[i],'*.fits',count=m)
   ;
-   read_sdo,filelist[0],index,/use_shared
+   read_sdo,filelist[0],index,/use_shared,/silent
    t0_tai=anytim2tai(index.t_obs)
   ;
-   read_sdo,filelist[-1],index,/use_shared
+   read_sdo,filelist[-1],index,/use_shared,/silent
    t1_tai=anytim2tai(index.t_obs)
   ;
   ; The t_obs values are slightly different in the spikes and data
