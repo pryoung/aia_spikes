@@ -64,6 +64,7 @@ t_obs_tai=anytim2tai(index.t_obs)
 IF t_obs_tai-spk_tai[0] GE 5.0 THEN BEGIN
    print,'% SPK_RESPIKE_GROUPS: mismatch between metadata and spikelist. Adjusting arrays.'
    metadata=metadata[1:*]
+   spk_tai=spk_tai[1:*]
    spikelist=spikelist[0:count-2]
 ENDIF 
 
@@ -97,7 +98,7 @@ FOR i=0,n-1 DO BEGIN
    IF nk NE m THEN print,'***WARNING: mismatch in cutout and spikes files***',m,nk
    spikefiles=spikelist[k]
   ;
-   aia_cutout_respike,filelist,spikelist=spikefiles
+   aia_cutout_respike,filelist,spikelist=spikefiles,/silent
 ENDFOR
 
 END
