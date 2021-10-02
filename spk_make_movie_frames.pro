@@ -34,11 +34,30 @@ PRO spk_make_movie_frames, group, dir, wave=wave, no_processing=no_processing, $
 ;      FFMPEG:   If set, then the routine calls SPK_MOVIE_FFMPEG to
 ;                create mp4 movies from the image frames. This
 ;                requires ffmpeg to be installed on the user's
-;                computer. 
+;                computer.
+;      CLEAN:    If set, then the respiked images are cleaned of
+;                spikes by using the /clean keyword of sdo2map.pro. In
+;                this case, the left image in the movie shows the
+;                respiked images, and the right image shows the
+;                respiked-despiked images. For the light curves, the
+;                blue line shows the respiked data, and red line shows
+;                the respiked-despiked data.
 ;
 ; OUTPUTS:
 ;      Creates the files 'movie.mp4' and 'light_curve.png' in the
 ;      directory DIR.
+;
+;      The blue line in the light curves shows the average intensity
+;      within a 11x11 pixel box around the spike event, derived from
+;      the original, despiked data. The red line shows the same light
+;      curve from the respiked data. (Thus the red line is always
+;      equal-to or higher than the blue line.) If the /clean keyword
+;      is set, then the light curves are different (see above).
+;
+;      The movie has two panels. The left shows the original, despiked
+;      images, and the right shows the new, respiked images. If the
+;      /clean keyword is set, then the images are different (see
+;      above). 
 ;
 ; EXAMPLE:
 ;      IDL> spk_make_movie_frames, 'my_cutouts', group
@@ -64,7 +83,10 @@ PRO spk_make_movie_frames, group, dir, wave=wave, no_processing=no_processing, $
 ;      Ver.8, 09-Sep-2021, Peter Young
 ;        Switched from aia_rgb_table to eis_mapper_aia_rgb when
 ;        setting color table; now obtain directory list from the group
-;        requestids. 
+;        requestids.
+;      Ver.9, 01-Oct-2021, Peter Young
+;        Added /clean to header (no change to code); updated header to
+;        better describe what /clean does.
 ;-
 
 

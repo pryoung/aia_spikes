@@ -1,6 +1,7 @@
 
 function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,  $
-                          list=list, _extra=_extra, dmin=dmin, image_time=image_time
+                          list=list, _extra=_extra, dmin=dmin, image_time=image_time, $
+                          color_ch=color_ch, color_cross=color_cross
 
 ;+
 ; NAME:
@@ -33,6 +34,9 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ;             image. Should be specified in a standard Solarsoft
 ;             format. If not specified, then it is set to the mid-time
 ;             between the minimum and maximum times in GROUP.
+;     Color_Ch: A string specifying the color of the coronal hole
+;               contour (if /CH has been set. The default is 'dodger
+;               blue'. 
 ;	
 ; KEYWORD PARAMETERS:
 ;     NUMBER:  If set, then the event locations are plotted with the
@@ -62,6 +66,8 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ;     Ver.7, 09-Sep-2021, Peter Young
 ;        Switched from aia_rgb_table to eis_mapper_aia_rgb when
 ;        setting color table.
+;     Ver.8, 30-Sep-2021, Peter YOung
+;        Added color_ch= and color_cross= optional inputs.
 ;-
 
 
@@ -73,6 +79,11 @@ IF n_elements(nplots) NE 0 AND n_elements(nplots) NE 2 THEN BEGIN
 ENDIF
 
 IF n_elements(dmin) EQ 0 THEN dmin=100.
+
+IF n_elements(color_ch) EQ 0 THEN color_ch='dodger blue'
+
+IF n_elements(color_cross) EQ 0 THEN color_cross=['dodger blue','yellow','white','red']
+
 
 n=n_elements(group)
 IF n_elements(nplots) EQ 2 THEN BEGIN
@@ -119,7 +130,6 @@ FOR i=0,n-1 DO BEGIN
 ENDFOR 
 
 
-color=['dodger blue','yellow','white','red']
 
 ang=2.*!pi*round(randomu(seed,n)*12.)/12.
 
@@ -164,7 +174,7 @@ FOR i=0,n-1 DO BEGIN
       END
      ;
       ELSE: BEGIN 
-         q=plot(xy[0]*[1,1],xy[1]*[1,1],symbol='+',color=color[icol],/overplot,sym_thick=2)
+         q=plot(xy[0]*[1,1],xy[1]*[1,1],symbol='+',color=color_cross[icol],/overplot,sym_thick=2)
       END
    ENDCASE 
 ENDFOR
@@ -199,7 +209,7 @@ IF keyword_set(ch) THEN BEGIN
             px[i]=float(xy_str[0])
             py[i]=float(xy_str[1])
          ENDFOR
-         r=plot(px,py,color='dodger blue',/overplot,xrange=p.xrange,yrange=p.yrange,th=2)
+         r=plot(px,py,color=color_ch,/overplot,xrange=p.xrange,yrange=p.yrange,th=2)
       ENDFOR
    ENDIF ELSE BEGIN
       print,'% SPK_PLOT_EVENTS: there are no coronal holes defined in the HEK for this time.'
