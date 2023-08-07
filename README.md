@@ -9,7 +9,7 @@ Requirements
 ============
 IDL version 8.5 or higher is recommended.
 
-You must be using the Solarsoft IDL distribution.
+You must be using the Solarsoft IDL distribution. You should have the SDO/AIA and Hinode/EIS packages installed.
 
 Set the environment variable $AIA_SPIKES in your idl_startup.pro file to the location where you want to store the downloaded spikes files.
 
