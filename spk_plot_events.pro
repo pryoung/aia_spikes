@@ -1,7 +1,8 @@
 
 function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,  $
                           list=list, _extra=_extra, dmin=dmin, image_time=image_time, $
-                          color_ch=color_ch, color_cross=color_cross
+                          color_ch=color_ch, color_cross=color_cross, $
+                          no_data=no_data
 
 ;+
 ; NAME:
@@ -41,7 +42,9 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ; KEYWORD PARAMETERS:
 ;     NUMBER:  If set, then the event locations are plotted with the
 ;              index number of the event.
-;     CH:     Overplot the SPoCA coronal hole outlines from the HEK. 
+;     CH:     Overplot the SPoCA coronal hole outlines from the HEK.
+;     NO_DATA: If set, then the locations of the spike events are
+;              not plotted.
 ;
 ; OUTPUTS:
 ;     Returns an IDL plot object containing the AIA image, with the
@@ -66,8 +69,10 @@ function spk_plot_events, group, wave=wave, number=number, ch=ch, nplots=nplots,
 ;     Ver.7, 09-Sep-2021, Peter Young
 ;        Switched from aia_rgb_table to eis_mapper_aia_rgb when
 ;        setting color table.
-;     Ver.8, 30-Sep-2021, Peter YOung
+;     Ver.8, 30-Sep-2021, Peter Young
 ;        Added color_ch= and color_cross= optional inputs.
+;     Ver.9, 04-Aug-2021, Peter Young
+;        Added /no_data keyword.
 ;-
 
 
@@ -133,6 +138,7 @@ ENDFOR
 
 ang=2.*!pi*round(randomu(seed,n)*12.)/12.
 
+IF NOT keyword_set(no_data) THEN BEGIN 
 icol_array=intarr(n)
 FOR i=0,n-1 DO BEGIN
    CASE 1 OF
@@ -177,7 +183,8 @@ FOR i=0,n-1 DO BEGIN
          q=plot(xy[0]*[1,1],xy[1]*[1,1],symbol='+',color=color_cross[icol],/overplot,sym_thick=2)
       END
    ENDCASE 
-ENDFOR
+ ENDFOR
+ENDIF 
 
 ;
 ; I check +/- 5mins either side of the AIA map time for coronal holes
@@ -214,18 +221,19 @@ IF keyword_set(ch) THEN BEGIN
    ENDIF ELSE BEGIN
       print,'% SPK_PLOT_EVENTS: there are no coronal holes defined in the HEK for this time.'
    ENDELSE 
+ ENDIF 
+
+IF NOT keyword_set(no_data) THEN BEGIN 
+  print,'   Color    Lifetime         No. events'
+  k=where(icol_array EQ 0,nk)
+  print,'   Blue     <= 60 seconds    '+trim(nk)
+  k=where(icol_array EQ 1,nk)
+  print,'   Yellow   <= 300 seconds   '+trim(nk)
+  k=where(icol_array EQ 2,nk)
+  print,'   White    > 300 seconds    '+trim(nk)
+  k=where(icol_array EQ 3,nk)
+  print,'   Red      > 1 hour         '+trim(nk)
 ENDIF
-
-
-print,'   Color    Lifetime         No. events'
-k=where(icol_array EQ 0,nk)
-print,'   Blue     <= 60 seconds    '+trim(nk)
-k=where(icol_array EQ 1,nk)
-print,'   Yellow   <= 300 seconds   '+trim(nk)
-k=where(icol_array EQ 2,nk)
-print,'   White    > 300 seconds    '+trim(nk)
-k=where(icol_array EQ 3,nk)
-print,'   Red      > 1 hour         '+trim(nk)
 
 return,p
 
